@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E1306C">
+<title>FantaC — Home</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ===== FULL EMBEDDED CSS (style.css + app.css + home tweaks) ===== */
+:root {
+  --pink: #E1306C;
+  --pink-dark: #C13584;
+  --purple: #833AB4;
+  --orange: #F77737;
+  --gradient: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  --gradient-v: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  --bg: #FAFAFA;
+  --white: #FFFFFF;
+  --dark: #262626;
+  --mid: #8e8e8e;
+  --border: #dbdbdb;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --pink-light: rgba(225,48,108,0.08);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --nav-h: 60px;
+  --player-h: 72px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: calc(var(--nav-h) + var(--player-h) + env(safe-area-inset-bottom) + 16px);
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: var(--font-body); }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(225,48,108,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--pink);
+  border: 1.5px solid var(--pink);
+}
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-logo { font-family: var(--font-display); font-weight: 800; font-size: 22px; }
+.app-logo span { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 0;
+  color: var(--mid);
+  transition: var(--transition);
+  cursor: pointer;
+  text-decoration: none;
+}
+.nav-item svg { width: 24px; height: 24px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
+.nav-item.active { color: var(--pink); }
+.nav-item.active svg { stroke: var(--pink); }
+
+/* Music Player Bar */
+.player-bar {
+  position: fixed;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 99;
+  height: var(--player-h);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.player-art {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f3f3f3;
+  flex-shrink: 0;
+}
+.player-info { flex: 1; overflow: hidden; }
+.player-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-artist { font-size: 12px; color: var(--mid); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+}
+.player-progress-fill {
+  height: 100%;
+  background: var(--gradient);
+  transition: width 0.5s linear;
+  width: 0%;
+}
+.player-controls { display: flex; align-items: center; gap: 12px; }
+.player-btn { color: var(--dark); font-size: 20px; }
+.player-play {
+  width: 36px; height: 36px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* Stories */
+.stories { display: flex; gap: 14px; overflow-x: auto; padding: 12px 16px; scroll-snap-type: x mandatory; }
+.stories::-webkit-scrollbar { display: none; }
+.story { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; cursor: pointer; }
+.story-ring {
+  width: 62px; height: 62px;
+  padding: 2px;
+  background: var(--gradient);
+  border-radius: 50%;
+}
+.story-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2.5px solid white; background: #f3f3f3; }
+.story-name { font-size: 11px; color: var(--dark); font-weight: 500; max-width: 62px; text-align: center; overflow: hidden; text-overflow: ellipsis; }
+.story-add { position: relative; }
+.story-add .story-ring { background: var(--border); }
+.story-add-icon {
+  position: absolute; bottom: 0; right: 0;
+  background: var(--pink); border-radius: 50%;
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 12px; border: 2px solid white;
+}
+
+/* Post Card */
+.post-card { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-bottom: 2px; }
+.post-header { display: flex; align-items: center; padding: 12px 16px; gap: 10px; }
+.post-meta { flex: 1; }
+.post-name { font-size: 14px; font-weight: 600; }
+.post-time { font-size: 12px; color: var(--mid); }
+.post-image { width: 100%; aspect-ratio: 1; object-fit: cover; background: #f3f3f3; }
+.post-actions { display: flex; align-items: center; padding: 8px 16px; gap: 16px; }
+.post-action-btn { display: flex; align-items: center; gap: 4px; font-size: 14px; color: var(--dark); transition: var(--transition); cursor: pointer; }
+.post-action-btn:hover { color: var(--pink); }
+.post-save { margin-left: auto; }
+.post-likes { padding: 0 16px 4px; font-size: 14px; font-weight: 600; }
+.post-caption { padding: 0 16px 8px; font-size: 14px; line-height: 1.5; }
+.post-caption strong { font-weight: 600; }
+.post-comments { padding: 0 16px 12px; font-size: 14px; color: var(--mid); }
+
+/* Full Player (modal) */
+.full-player {
+  position: fixed;
+  inset: 0;
+  background: var(--white);
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+}
+.full-player.open { display: flex; animation: slideUp 0.3s; }
+.full-player-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; }
+.full-player-header button { font-size: 24px; color: var(--dark); }
+.full-player-art { width: 260px; height: 260px; border-radius: 20px; object-fit: cover; margin: 20px auto; box-shadow: 0 20px 60px rgba(0,0,0,0.15); background: linear-gradient(135deg, var(--purple), var(--pink)); }
+.full-player-meta { text-align: center; padding: 0 24px 20px; }
+.full-player-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+.full-player-artist { font-size: 15px; color: var(--mid); }
+.full-player-progress { padding: 0 24px 20px; }
+.progress-bar { width: 100%; height: 4px; background: var(--border); border-radius: 2px; cursor: pointer; position: relative; }
+.progress-fill { height: 100%; background: var(--gradient); border-radius: 2px; position: relative; }
+.progress-fill::after { content: ''; position: absolute; right: -6px; top: -4px; width: 12px; height: 12px; background: var(--pink); border-radius: 50%; }
+.progress-times { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: var(--mid); }
+.full-player-controls { display: flex; align-items: center; justify-content: center; gap: 24px; padding: 0 24px; }
+.full-player-btn { font-size: 26px; color: var(--mid); cursor: pointer; }
+.full-player-play {
+  width: 64px; height: 64px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 8px 25px rgba(225,48,108,0.4);
+}
+.full-player-extras { display: flex; align-items: center; justify-content: space-around; padding: 20px 24px 0; }
+.full-player-extra { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--mid); cursor: pointer; }
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--dark);
+  color: white;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: toastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast.success { background: #10b981; }
+.toast.error { background: #EF4444; }
+.toast.info { background: var(--pink); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* Utilities */
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.p-16 { padding: 16px; }
+.mt-8 { margin-top: 8px; }
+.text-sm { font-size: 13px; }
+.hidden { display: none !important; }
+.card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.avatar { border-radius: 50%; object-fit: cover; }
+.points-pill { background: var(--gradient); color: white; border-radius: 40px; padding: 4px 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- App Header -->
+<div class="app-header flex-between">
+  <div class="app-logo">Fanta<span>C</span></div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span class="points-pill" id="user-points-badge">⭐ 0</span>
+    <div id="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; cursor: pointer;" onclick="location.href='profile.html'">
+      <img src="" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+  </div>
+</div>
+
+<!-- Stories -->
+<div class="stories">
+  <div class="story story-add" onclick="alert('Coming soon: Create a story!')">
+    <div class="story-ring"><img class="story-img" src="https://ui-avatars.com/api/?background=E1306C&color=fff&name=+" alt="+"></div>
+    <div class="story-add-icon">+</div>
+    <div class="story-name">Your story</div>
+  </div>
+  <div class="story" onclick="alert('Story from Davido')">
+    <div class="story-ring"><img class="story-img" src="https://picsum.photos/seed/davido_av/100/100" alt="Davido"></div>
+    <div class="story-name">Davido</div>
+  </div>
+  <div class="story" onclick="alert('Story from Burna Boy')">
+    <div class="story-ring"><img class="story-img" src="https://picsum.photos/seed/burna_av/100/100" alt="Burna"></div>
+    <div class="story-name">Burna Boy</div>
+  </div>
+  <div class="story" onclick="alert('Story from Rema')">
+    <div class="story-ring"><img class="story-img" src="https://picsum.photos/seed/rema_av/100/100" alt="Rema"></div>
+    <div class="story-name">Rema</div>
+  </div>
+  <div class="story" onclick="alert('Story from Ayra Starr')">
+    <div class="story-ring"><img class="story-img" src="https://picsum.photos/seed/ayra_av/100/100" alt="Ayra"></div>
+    <div class="story-name">Ayra Starr</div>
+  </div>
+</div>
+
+<!-- Feed Posts -->
+<div id="feed-container" style="padding-bottom: 80px;"></div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="home.html" class="nav-item active" data-page="home.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5M5 10v8a2 2 0 002 2h10a2 2 0 002-2v-8"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="explore.html" class="nav-item" data-page="explore.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62l.04-.04z"/></svg>
+    <span>Explore</span>
+  </a>
+  <a href="camps.html" class="nav-item" data-page="camps.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16h5"/><path d="M12 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16z"/></svg>
+    <span>Camps</span>
+  </a>
+  <a href="giveaway.html" class="nav-item" data-page="giveaway.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8M12 2v12m0 0-2-2m2 2 2-2M2 7h20v4H2z"/></svg>
+    <span>Giveaways</span>
+  </a>
+  <a href="profile.html" class="nav-item" data-page="profile.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profile</span>
+  </a>
+</div>
+
+<!-- Mini Player Bar -->
+<div id="player-bar" class="player-bar" style="display: none;">
+  <img id="bar-art" class="player-art" src="" alt="art">
+  <div class="player-info">
+    <div id="bar-title" class="player-title">-</div>
+    <div id="bar-artist" class="player-artist">-</div>
+  </div>
+  <div class="player-controls">
+    <button id="bar-prev" class="player-btn">⏮</button>
+    <button id="bar-play" class="player-play">▶</button>
+    <button id="bar-next" class="player-btn">⏭</button>
+  </div>
+  <div class="player-progress"><div id="bar-progress-fill" class="player-progress-fill"></div></div>
+</div>
+
+<!-- Full Player Modal -->
+<div id="full-player" class="full-player">
+  <div class="full-player-header">
+    <button id="fp-close">✕</button>
+    <div></div>
+    <button id="fp-more">⋮</button>
+  </div>
+  <img id="fp-art" class="full-player-art" src="" alt="art">
+  <div class="full-player-meta">
+    <div id="fp-title" class="full-player-title">-</div>
+    <div id="fp-artist" class="full-player-artist">-</div>
+  </div>
+  <div class="full-player-progress">
+    <div id="fp-progress-bar" class="progress-bar"><div id="fp-progress-fill" class="progress-fill"></div></div>
+    <div class="progress-times"><span id="fp-current">0:00</span><span id="fp-duration">0:00</span></div>
+  </div>
+  <div class="full-player-controls">
+    <button id="fp-prev" class="full-player-btn">⏮</button>
+    <button id="fp-play" class="full-player-play">▶</button>
+    <button id="fp-next" class="full-player-btn">⏭</button>
+  </div>
+  <div class="full-player-extras">
+    <div id="fp-like" class="full-player-extra">🤍</div>
+    <div id="fp-repeat" class="full-player-extra">🔁</div>
+    <div id="fp-shuffle" class="full-player-extra">🔀</div>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Firebase SDK (modular) -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc, increment } from "firebase/firestore";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyADh-PXSVsKcisJvJqIkLnjIGRhpR0ymw",
+    authDomain: "fantac-dc759.firebaseapp.com",
+    projectId: "fantac-dc759",
+    storageBucket: "fantac-dc759.firebasestorage.app",
+    messagingSenderId: "26720948797",
+    appId: "1:26720948797:web:f6b7c336ee9741c668d054"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Helper: show toast
+  function showToast(msg, type = '') {
+    const container = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${msg}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+      t.style.animation = 'toastOut 0.3s ease forwards';
+      setTimeout(() => t.remove(), 300);
+    }, 3000);
+  }
+
+  // Format numbers (e.g., 12400 -> 12.4K)
+  function formatNum(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return n.toString();
+  }
+
+  // Load user points & avatar
+  async function loadUserUI(uid) {
+    const userDoc = await getDoc(doc(db, 'users', uid));
+    if (userDoc.exists()) {
+      const data = userDoc.data();
+      document.getElementById('user-points-badge').innerHTML = `⭐ ${formatNum(data.points || 0)}`;
+      const avatarEl = document.querySelector('#user-avatar-header img');
+      if (avatarEl) {
+        avatarEl.src = data.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.displayName || 'U')}&background=E1306C&color=fff`;
+      }
+    }
+  }
+
+  // Like post (adds point to user)
+  async function toggleLike(btn, postId, currentLikes, liked) {
+    if (liked) return;
+    btn.querySelector('.like-icon').textContent = '❤️';
+    btn.querySelector('.like-icon').style.transform = 'scale(1.4)';
+    setTimeout(() => btn.querySelector('.like-icon').style.transform = 'scale(1)', 200);
+    const countSpan = btn.querySelector('.like-count');
+    const newLikes = currentLikes + 1;
+    countSpan.textContent = formatNum(newLikes);
+    // Award points to current user
+    const user = auth.currentUser;
+    if (user) {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, { points: increment(1) });
+      showToast('+1 point! ❤️', 'info');
+      loadUserUI(user.uid);
+    }
+    // In real app, you'd also update Firestore post document
+  }
+
+  // Load feed posts (demo data)
+  async function loadFeed() {
+    const container = document.getElementById('feed-container');
+    if (!container) return;
+    // Sample posts – in production, fetch from Firestore 'posts' collection
+    const posts = [
+      { id: 'p1', author: 'Davido', authorAvatar: 'https://picsum.photos/seed/davido_av/100/100', time: '2h', content: 'Timeless tour continues! 🔥', image: 'https://picsum.photos/seed/post1/600/600', likes: 12400, comments: 1200, shares: 856, liked: false },
+      { id: 'p2', author: 'Rema', authorAvatar: 'https://picsum.photos/seed/rema_av/100/100', time: '5h', content: 'Studio vibes 🎧', image: 'https://picsum.photos/seed/post2/600/600', likes: 8700, comments: 623, shares: 412, liked: false },
+      { id: 'p3', author: 'Ayra Starr', authorAvatar: 'https://picsum.photos/seed/ayra_av/100/100', time: '1d', content: 'Thank you Lagos! ✨', image: 'https://picsum.photos/seed/post3/600/600', likes: 6100, comments: 318, shares: 204, liked: false }
+    ];
+    container.innerHTML = '';
+    for (const post of posts) {
+      const postDiv = document.createElement('div');
+      postDiv.className = 'post-card';
+      postDiv.innerHTML = `
+        <div class="post-header" onclick="location.href='artist.html?id=${post.author}'">
+          <img class="avatar" style="width:40px;height:40px;border-radius:50%;" src="${post.authorAvatar}" alt="${post.author}">
+          <div class="post-meta"><div class="post-name">${post.author}</div><div class="post-time">${post.time}</div></div>
+        </div>
+        <img class="post-image" src="${post.image}" alt="post" onclick="alert('View post')">
+        <div class="post-actions">
+          <div class="post-action-btn like-btn" data-liked="${post.liked}" data-likes="${post.likes}">
+            <span class="like-icon">${post.liked ? '❤️' : '🤍'}</span>
+            <span class="like-count">${formatNum(post.likes)}</span>
+          </div>
+          <div class="post-action-btn" onclick="alert('Comments coming soon')">💬 <span>${formatNum(post.comments)}</span></div>
+          <div class="post-action-btn" onclick="alert('Share')">↗️ <span>${formatNum(post.shares)}</span></div>
+          <div class="post-save post-action-btn" onclick="alert('Save')">🔖</div>
+        </div>
+        <div class="post-likes">${formatNum(post.likes)} likes</div>
+        <div class="post-caption"><strong>${post.author}</strong> ${post.content}</div>
+        <div class="post-comments">View all ${formatNum(post.comments)} comments</div>
+      `;
+      const likeBtn = postDiv.querySelector('.like-btn');
+      likeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const liked = likeBtn.getAttribute('data-liked') === 'true';
+        if (!liked) {
+          const currentLikes = parseInt(likeBtn.getAttribute('data-likes'));
+          toggleLike(likeBtn, post.id, currentLikes, false);
+          likeBtn.setAttribute('data-liked', 'true');
+          likeBtn.setAttribute('data-likes', (currentLikes + 1).toString());
+        }
+      });
+      container.appendChild(postDiv);
+    }
+    // Add Now Playing suggestion
+    const suggestion = document.createElement('div');
+    suggestion.className = 'card p-16 mt-8';
+    suggestion.style.margin = '16px';
+    suggestion.style.background = 'var(--pink-light)';
+    suggestion.style.borderRadius = '20px';
+    suggestion.innerHTML = `
+      <div class="flex-between">
+        <div><strong>🔥 Trending now</strong><br><span class="text-sm">Rema - Calm Down</span></div>
+        <button class="btn-primary btn-sm" id="play-trending">▶ Play</button>
+      </div>
+    `;
+    container.appendChild(suggestion);
+    suggestion.querySelector('#play-trending').addEventListener('click', () => {
+      showToast('Music player coming soon!', 'info');
+    });
+  }
+
+  // Auth check & load
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+    await loadUserUI(user.uid);
+    loadFeed();
+    // Initialize player components (simplified)
+    const playBtn = document.getElementById('bar-play');
+    if (playBtn) {
+      playBtn.addEventListener('click', () => showToast('Player demo - add tracks', 'info'));
+    }
+  });
+
+  // Logout (optional, but can be added to profile menu)
+  window.logout = async () => {
+    await signOut(auth);
+    window.location.href = 'index.html';
+  };
+</script>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E1306C">
+<title>FantaC — Giveaways</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ===== FULL EMBEDDED CSS ===== */
+:root {
+  --pink: #E1306C;
+  --pink-dark: #C13584;
+  --purple: #833AB4;
+  --orange: #F77737;
+  --gradient: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  --gradient-v: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  --bg: #FAFAFA;
+  --white: #FFFFFF;
+  --dark: #262626;
+  --mid: #8e8e8e;
+  --border: #dbdbdb;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --pink-light: rgba(225,48,108,0.08);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --nav-h: 60px;
+  --player-h: 72px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: calc(var(--nav-h) + var(--player-h) + env(safe-area-inset-bottom) + 16px);
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; background: none; }
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-logo { font-family: var(--font-display); font-weight: 800; font-size: 22px; }
+.app-logo span { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.points-pill { background: var(--gradient); color: white; border-radius: 40px; padding: 4px 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 0;
+  color: var(--mid);
+  transition: var(--transition);
+  text-decoration: none;
+}
+.nav-item svg { width: 24px; height: 24px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
+.nav-item.active { color: var(--pink); }
+.nav-item.active svg { stroke: var(--pink); }
+
+/* Player Bar (hidden initially) */
+.player-bar {
+  position: fixed;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 99;
+  height: var(--player-h);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.player-art {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f3f3f3;
+  flex-shrink: 0;
+}
+.player-info { flex: 1; overflow: hidden; }
+.player-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-artist { font-size: 12px; color: var(--mid); }
+.player-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+}
+.player-progress-fill {
+  height: 100%;
+  background: var(--gradient);
+  transition: width 0.5s linear;
+  width: 0%;
+}
+.player-controls { display: flex; align-items: center; gap: 12px; }
+.player-btn { color: var(--dark); font-size: 20px; }
+.player-play {
+  width: 36px; height: 36px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* Giveaway specific styles */
+.explore-header {
+  background: var(--gradient-v);
+  padding: 24px 16px;
+  color: white;
+  border-radius: 0 0 24px 24px;
+  margin-bottom: 16px;
+}
+.explore-header h1 { font-family: var(--font-display); font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.explore-header p { opacity: 0.85; font-size: 14px; }
+
+.giveaway-card {
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  background: var(--white);
+}
+.giveaway-banner {
+  height: 140px;
+  background: var(--gradient-v);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.giveaway-banner::before {
+  content: '🎁';
+  font-size: 60px;
+  opacity: 0.3;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.giveaway-banner-text {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 800;
+  color: white;
+  text-align: center;
+  z-index: 1;
+}
+.giveaway-body { padding: 16px; }
+.giveaway-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.giveaway-meta { display: flex; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--mid); }
+.giveaway-description { font-size: 14px; color: var(--mid); margin-bottom: 12px; line-height: 1.4; }
+.giveaway-countdown { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.countdown-unit { text-align: center; }
+.countdown-num {
+  background: var(--dark);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  padding: 8px 12px;
+  border-radius: 8px;
+  min-width: 44px;
+}
+.countdown-label { font-size: 10px; color: var(--mid); margin-top: 3px; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(225,48,108,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-full { width: 100%; }
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--dark);
+  color: white;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: toastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast.success { background: #10b981; }
+.toast.error { background: #EF4444; }
+.toast.info { background: var(--pink); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.mt-8 { margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="app-header flex-between">
+  <div class="app-logo">Fanta<span>C</span></div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span class="points-pill" id="user-points-badge">⭐ 0</span>
+    <div id="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; cursor: pointer;" onclick="location.href='profile.html'">
+      <img src="" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="explore-header">
+    <h1>🎁 Giveaways</h1>
+    <p>Support artists and win exclusive prizes</p>
+  </div>
+  <div id="giveaway-list" style="padding:0 16px;"></div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="home.html" class="nav-item"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5M5 10v8a2 2 0 002 2h10a2 2 0 002-2v-8"/></svg><span>Home</span></a>
+  <a href="explore.html" class="nav-item"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62l.04-.04z"/></svg><span>Explore</span></a>
+  <a href="camps.html" class="nav-item"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16h5"/><path d="M12 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16z"/></svg><span>Camps</span></a>
+  <a href="giveaway.html" class="nav-item active"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8M12 2v12m0 0-2-2m2 2 2-2M2 7h20v4H2z"/></svg><span>Giveaways</span></a>
+  <a href="profile.html" class="nav-item"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profile</span></a>
+</div>
+
+<!-- Player Bar (hidden) -->
+<div id="player-bar" class="player-bar" style="display: none;">
+  <img id="bar-art" class="player-art" src="">
+  <div class="player-info">
+    <div id="bar-title" class="player-title">-</div>
+    <div id="bar-artist" class="player-artist">-</div>
+  </div>
+  <div class="player-controls">
+    <button id="bar-prev" class="player-btn">⏮</button>
+    <button id="bar-play" class="player-play">▶</button>
+    <button id="bar-next" class="player-btn">⏭</button>
+  </div>
+  <div class="player-progress"><div id="bar-progress-fill" class="player-progress-fill"></div></div>
+</div>
+
+<div id="full-player" class="full-player" style="display:none;"></div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Firebase modular SDK -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, collection, getDocs, doc, updateDoc, increment, arrayUnion, getDoc } from "firebase/firestore";
+
+  // Firebase config (your real project)
+  const firebaseConfig = {
+    apiKey: "AIzaSyADh-PXSVsKcisJvJqIkLnjIGRhpR0ymw",
+    authDomain: "fantac-dc759.firebaseapp.com",
+    projectId: "fantac-dc759",
+    storageBucket: "fantac-dc759.firebasestorage.app",
+    messagingSenderId: "26720948797",
+    appId: "1:26720948797:web:f6b7c336ee9741c668d054"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+
+  function showToast(msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${msg}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+      t.style.animation = 'toastOut 0.3s ease forwards';
+      setTimeout(() => t.remove(), 300);
+    }, 3000);
+  }
+
+  function formatNum(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return n.toString();
+  }
+
+  // Countdown timer
+  function startCountdown(endTimestamp, elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    function update() {
+      const diff = endTimestamp - Date.now();
+      if (diff <= 0) {
+        el.innerHTML = '<div class="countdown-unit"><span class="countdown-num">Ended</span></div>';
+        return;
+      }
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (86400000)) / 3600000);
+      const mins = Math.floor((diff % 3600000) / 60000);
+      const secs = Math.floor((diff % 60000) / 1000);
+      el.innerHTML = `
+        <div class="countdown-unit"><div class="countdown-num">${String(days).padStart(2,'0')}</div><div class="countdown-label">Days</div></div>
+        <div class="countdown-unit"><div class="countdown-num">${String(hours).padStart(2,'0')}</div><div class="countdown-label">Hrs</div></div>
+        <div class="countdown-unit"><div class="countdown-num">${String(mins).padStart(2,'0')}</div><div class="countdown-label">Min</div></div>
+        <div class="countdown-unit"><div class="countdown-num">${String(secs).padStart(2,'0')}</div><div class="countdown-label">Sec</div></div>
+      `;
+      setTimeout(update, 1000);
+    }
+    update();
+  }
+
+  // Load user's points and avatar in header
+  async function loadUserHeader(uid) {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        document.getElementById('user-points-badge').innerHTML = `⭐ ${formatNum(data.points || 0)}`;
+        const avatarImg = document.querySelector('#user-avatar-header img');
+        avatarImg.src = data.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.displayName || 'U')}&background=E1306C&color=fff`;
+      }
+    } catch (e) { console.warn(e); }
+  }
+
+  // Enter giveaway: add points, record entry, update entries count
+  async function enterGiveaway(giveawayId, giveawayTitle) {
+    if (!currentUser) {
+      showToast('Please login first', 'error');
+      return;
+    }
+    const btn = document.querySelector(`button[data-giveaway="${giveawayId}"]`);
+    if (btn && btn.disabled) return;
+    if (btn) btn.disabled = true;
+
+    try {
+      // Reference to giveaway document
+      const giveawayRef = doc(db, 'giveaways', giveawayId);
+      const giveawaySnap = await getDoc(giveawayRef);
+      if (!giveawaySnap.exists()) {
+        showToast('Giveaway not found', 'error');
+        if (btn) btn.disabled = false;
+        return;
+      }
+      const giveawayData = giveawaySnap.data();
+      // Check if already entered (using an array of user IDs)
+      const enteredUsers = giveawayData.enteredUsers || [];
+      if (enteredUsers.includes(currentUser.uid)) {
+        showToast('You already entered this giveaway!', 'info');
+        if (btn) btn.disabled = false;
+        return;
+      }
+      // Update giveaway: add user to enteredUsers, increment entries count
+      await updateDoc(giveawayRef, {
+        enteredUsers: arrayUnion(currentUser.uid),
+        entries: increment(1)
+      });
+      // Award 10 points to user
+      const userRef = doc(db, 'users', currentUser.uid);
+      await updateDoc(userRef, {
+        points: increment(10),
+        giveawaysWon: increment(0) // just placeholder, won count not incremented here
+      });
+      showToast(`🎉 You entered "${giveawayTitle}"! +10 points`, 'success');
+      // Update button text and disable
+      if (btn) {
+        btn.textContent = 'Entered ✓';
+        btn.disabled = true;
+      }
+      // Refresh user points in header
+      await loadUserHeader(currentUser.uid);
+    } catch (error) {
+      console.error('Error entering giveaway:', error);
+      showToast('Failed to enter giveaway', 'error');
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  // Load giveaways from Firestore (or use sample fallback)
+  async function loadGiveaways() {
+    const container = document.getElementById('giveaway-list');
+    if (!container) return;
+    container.innerHTML = '<div style="text-align:center; padding:40px;">Loading giveaways...</div>';
+
+    try {
+      const querySnapshot = await getDocs(collection(db, 'giveaways'));
+      const giveaways = [];
+      querySnapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        giveaways.push({
+          id: docSnap.id,
+          title: data.title,
+          artist: data.artist,
+          description: data.description,
+          value: data.value,
+          entries: data.entries || 0,
+          endsIn: data.endsIn?.toDate ? data.endsIn.toDate().getTime() : data.endsIn,
+          enteredUsers: data.enteredUsers || []
+        });
+      });
+      if (giveaways.length === 0) {
+        // Use sample demos (so page doesn't look empty)
+        const sampleGiveaways = [
+          { id: 'g1', title: 'VIP Concert Tickets', artist: 'Davido', description: 'Win 2 VIP tickets to Davido\'s Timeless Tour! + Backstage access', value: '₦150,000', entries: 45820, endsIn: Date.now() + 3 * 24 * 60 * 60 * 1000, enteredUsers: [] },
+          { id: 'g2', title: 'Signed Album Bundle', artist: 'Burna Boy', description: 'Win a signed Love Damini vinyl + exclusive merch box', value: '₦80,000', entries: 32100, endsIn: Date.now() + 5 * 24 * 60 * 60 * 1000, enteredUsers: [] },
+          { id: 'g3', title: 'Studio Session', artist: 'Rema', description: '1-hour studio session with Rema + production credits', value: 'Priceless', entries: 89420, endsIn: Date.now() + 1 * 24 * 60 * 60 * 1000, enteredUsers: [] }
+        ];
+        giveaways.push(...sampleGiveaways);
+      }
+      container.innerHTML = '';
+      for (const g of giveaways) {
+        const alreadyEntered = g.enteredUsers.includes(currentUser?.uid);
+        const card = document.createElement('div');
+        card.className = 'giveaway-card';
+        const countdownId = `countdown-${g.id}`;
+        card.innerHTML = `
+          <div class="giveaway-banner"><div class="giveaway-banner-text">${g.title}</div></div>
+          <div class="giveaway-body">
+            <div class="giveaway-title">${g.title} by ${g.artist}</div>
+            <div class="giveaway-meta"><span>🎁 ${g.value}</span><span>👥 ${formatNum(g.entries)} entries</span></div>
+            <div class="giveaway-description">${g.description}</div>
+            <div id="${countdownId}" class="giveaway-countdown mt-8"></div>
+            <button class="btn btn-primary btn-full mt-8" data-giveaway="${g.id}" ${alreadyEntered ? 'disabled' : ''}>${alreadyEntered ? 'Already Entered' : 'Enter Giveaway'}</button>
+          </div>
+        `;
+        container.appendChild(card);
+        // Attach event listener to button
+        const btn = card.querySelector(`button[data-giveaway="${g.id}"]`);
+        if (btn && !alreadyEntered) {
+          btn.addEventListener('click', () => enterGiveaway(g.id, g.title));
+        }
+        // Start countdown
+        startCountdown(g.endsIn, countdownId);
+      }
+    } catch (error) {
+      console.error('Error loading giveaways:', error);
+      container.innerHTML = '<div style="text-align:center; padding:40px;">Failed to load giveaways. Try again later.</div>';
+    }
+  }
+
+  // Auth state
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+    currentUser = user;
+    await loadUserHeader(user.uid);
+    await loadGiveaways();
+  });
+</script>
+</body>
+</html>

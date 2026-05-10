@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E1306C">
+<title>FantaC — Profile</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+/* ===== FULL EMBEDDED CSS (global + profile styles) ===== */
+:root {
+  --pink: #E1306C;
+  --pink-dark: #C13584;
+  --purple: #833AB4;
+  --orange: #F77737;
+  --gradient: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  --gradient-v: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+  --bg: #FAFAFA;
+  --white: #FFFFFF;
+  --dark: #262626;
+  --mid: #8e8e8e;
+  --border: #dbdbdb;
+  --card-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --pink-light: rgba(225,48,108,0.08);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+  --nav-h: 60px;
+  --player-h: 72px;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+  padding-bottom: calc(var(--nav-h) + var(--player-h) + env(safe-area-inset-bottom) + 16px);
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+button { cursor: pointer; border: none; background: none; font-family: var(--font-body); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--gradient);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(225,48,108,0.35);
+}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--pink);
+  border: 1.5px solid var(--pink);
+}
+.btn-sm { padding: 6px 14px; font-size: 12px; }
+.btn-full { width: 100%; }
+.mt-8 { margin-top: 8px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.text-center { text-align: center; }
+
+/* Header */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-logo { font-family: var(--font-display); font-weight: 800; font-size: 22px; }
+.app-logo span { background: var(--gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.points-pill { background: var(--gradient); color: white; border-radius: 40px; padding: 4px 12px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-left: 12px; }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-h);
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 0;
+  color: var(--mid);
+  transition: var(--transition);
+  text-decoration: none;
+}
+.nav-item svg { width: 24px; height: 24px; }
+.nav-item span { font-size: 10px; font-weight: 500; }
+.nav-item.active { color: var(--pink); }
+.nav-item.active svg { stroke: var(--pink); }
+
+/* Music Player Bar (minimal) */
+.player-bar {
+  position: fixed;
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 99;
+  height: var(--player-h);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+}
+.player-art {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: #f3f3f3;
+  flex-shrink: 0;
+}
+.player-info { flex: 1; overflow: hidden; }
+.player-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.player-artist { font-size: 12px; color: var(--mid); }
+.player-progress {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+}
+.player-progress-fill {
+  height: 100%;
+  background: var(--gradient);
+  transition: width 0.5s linear;
+  width: 0%;
+}
+.player-controls { display: flex; align-items: center; gap: 12px; }
+.player-btn { color: var(--dark); font-size: 20px; }
+.player-play {
+  width: 36px; height: 36px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* Profile Page Styles */
+.profile-cover {
+  height: 200px;
+  background: var(--gradient-v);
+  position: relative;
+  overflow: hidden;
+}
+.profile-cover img { width: 100%; height: 100%; object-fit: cover; }
+.profile-cover-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, rgba(0,0,0,0.3) 100%); }
+
+.profile-info-section { padding: 0 16px 16px; background: var(--white); }
+.profile-avatar-row { display: flex; align-items: flex-end; justify-content: space-between; margin-top: -36px; margin-bottom: 12px; }
+.profile-avatar-wrap {
+  width: 82px; height: 82px;
+  border-radius: 50%;
+  padding: 3px;
+  background: var(--gradient);
+  position: relative;
+  z-index: 1;
+}
+.profile-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid white; background: #f3f3f3; }
+.profile-action-row { display: flex; gap: 8px; }
+.edit-profile-btn { background: var(--white); border: 1px solid var(--border); border-radius: 30px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
+.edit-profile-btn:hover { background: var(--bg); }
+
+.profile-name { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+.profile-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.profile-location { font-size: 13px; color: var(--mid); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.profile-bio { font-size: 14px; color: var(--dark); line-height: 1.5; margin-bottom: 12px; }
+.verified {
+  width: 16px; height: 16px;
+  background: var(--gradient);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.verified::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.profile-stat { padding: 10px 4px; text-align: center; border-right: 1px solid var(--border); cursor: pointer; }
+.profile-stat:last-child { border-right: none; }
+.profile-stat-num { font-size: 15px; font-weight: 700; font-family: var(--font-display); }
+.profile-stat-label { font-size: 10px; color: var(--mid); margin-top: 1px; }
+
+.gamification-bar {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.gamification-item { display: flex; align-items: center; gap: 8px; }
+.gamification-num { font-size: 14px; font-weight: 700; }
+.gamification-label { font-size: 11px; color: var(--mid); }
+
+.level-bar-wrap { background: var(--border); border-radius: var(--radius-full); height: 8px; overflow: hidden; }
+.level-bar { height: 100%; background: var(--gradient); border-radius: var(--radius-full); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+
+.content-tabs { border-bottom: 1px solid var(--border); display: flex; }
+.content-tab {
+  flex: 1;
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mid);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+.content-tab.active { color: var(--pink); border-bottom-color: var(--pink); }
+
+.posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.grid-post { aspect-ratio: 1; overflow: hidden; position: relative; cursor: pointer; }
+.grid-post img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.grid-post:hover img { transform: scale(1.05); }
+.grid-post-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.grid-post:hover .grid-post-overlay { display: flex; }
+
+.camp-card {
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--white);
+  margin-bottom: 8px;
+}
+.camp-info { flex: 1; }
+.camp-name { font-size: 15px; font-weight: 600; }
+.camp-members { font-size: 12px; color: var(--mid); }
+.avatar { border-radius: 50%; object-fit: cover; }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  align-items: flex-end;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+.modal-sheet {
+  background: var(--white);
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s;
+}
+.modal-handle { width: 36px; height: 4px; background: var(--border); border-radius: 2px; margin: 0 auto 16px; }
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  outline: none;
+}
+.input:focus { border-color: var(--pink); box-shadow: 0 0 0 3px var(--pink-light); }
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  width: calc(100% - 32px);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--dark);
+  color: white;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  animation: toastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast.success { background: #10b981; }
+.toast.error { background: #EF4444; }
+@keyframes toastIn { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.hidden { display: none !important; }
+.card { background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- App Header -->
+<div class="app-header flex-between">
+  <div class="app-logo">Fanta<span>C</span></div>
+  <div style="display: flex; align-items: center; gap: 12px;">
+    <span class="points-pill" id="user-points-badge">⭐ 0</span>
+    <div id="user-avatar-header" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; cursor: pointer;" onclick="location.href='profile.html'">
+      <img src="" alt="avatar" style="width:100%;height:100%;object-fit:cover;">
+    </div>
+  </div>
+</div>
+
+<!-- Profile Page Content -->
+<div class="page">
+  <div class="profile-cover">
+    <img id="profile-cover-img" src="https://picsum.photos/seed/profile_cover/800/400" alt="cover">
+    <div class="profile-cover-overlay"></div>
+  </div>
+  <div class="profile-info-section">
+    <div class="profile-avatar-row">
+      <div class="profile-avatar-wrap">
+        <img id="profile-avatar" class="profile-avatar" src="" alt="avatar">
+      </div>
+      <div class="profile-action-row">
+        <button id="edit-profile-btn" class="edit-profile-btn" onclick="openEditModal()">Edit Profile</button>
+        <button id="share-profile-btn" class="edit-profile-btn" onclick="showToast('Share profile link', 'info')">📤</button>
+      </div>
+    </div>
+    <div class="profile-name-row">
+      <h1 id="profile-name" class="profile-name">Loading...</h1>
+      <div id="verified-badge" class="verified" style="display: none;"></div>
+    </div>
+    <div id="profile-location" class="profile-location">📍 </div>
+    <div id="profile-bio" class="profile-bio"></div>
+
+    <div class="profile-stats">
+      <div class="profile-stat"><div class="profile-stat-num" id="stat-posts">0</div><div class="profile-stat-label">Posts</div></div>
+      <div class="profile-stat"><div class="profile-stat-num" id="stat-followers">0</div><div class="profile-stat-label">Followers</div></div>
+      <div class="profile-stat"><div class="profile-stat-num" id="stat-following">0</div><div class="profile-stat-label">Following</div></div>
+      <div class="profile-stat"><div class="profile-stat-num" id="stat-camps">0</div><div class="profile-stat-label">Camps</div></div>
+      <div class="profile-stat"><div class="profile-stat-num" id="stat-giveaways">0</div><div class="profile-stat-label">Won</div></div>
+    </div>
+
+    <div class="gamification-bar">
+      <div class="gamification-item"><span>⭐</span><div><span id="profile-points" class="gamification-num">0</span><div class="gamification-label">Points</div></div></div>
+      <div class="gamification-item"><span>🏆</span><div><span id="profile-level" class="gamification-num">1</span><div class="gamification-label">Level</div></div></div>
+      <div class="gamification-item"><span>🔥</span><div><span id="profile-streak" class="gamification-num">0</span><div class="gamification-label">Day streak</div></div></div>
+    </div>
+
+    <div class="level-bar-wrap mb-16"><div id="level-progress" class="level-bar" style="width:0%"></div></div>
+  </div>
+
+  <div class="content-tabs">
+    <div class="content-tab active" data-tab="posts">Posts</div>
+    <div class="content-tab" data-tab="liked">Liked</div>
+    <div class="content-tab" data-tab="camps">My Camps</div>
+  </div>
+
+  <div id="profile-posts-grid" class="posts-grid"></div>
+  <div id="profile-liked-grid" class="posts-grid" style="display:none;"></div>
+  <div id="profile-camps-list" style="display:none; padding:16px;"></div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+  <a href="home.html" class="nav-item" data-page="home.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9.5L12 3l9 6.5M5 10v8a2 2 0 002 2h10a2 2 0 002-2v-8"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="explore.html" class="nav-item" data-page="explore.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H5.78a1.65 1.65 0 0 0-1.51 1 1.65 1.65 0 0 0 .33 1.82l.04.04A10 10 0 0 0 12 17.66a10 10 0 0 0 6.36-2.62l.04-.04z"/></svg>
+    <span>Explore</span>
+  </a>
+  <a href="camps.html" class="nav-item" data-page="camps.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16h5"/><path d="M12 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16z"/></svg>
+    <span>Camps</span>
+  </a>
+  <a href="giveaway.html" class="nav-item" data-page="giveaway.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8M12 2v12m0 0-2-2m2 2 2-2M2 7h20v4H2z"/></svg>
+    <span>Giveaways</span>
+  </a>
+  <a href="profile.html" class="nav-item active" data-page="profile.html">
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span>Profile</span>
+  </a>
+</div>
+
+<!-- Mini Player Bar (hidden initially) -->
+<div id="player-bar" class="player-bar" style="display: none;">
+  <img id="bar-art" class="player-art" src="" alt="art">
+  <div class="player-info">
+    <div id="bar-title" class="player-title">-</div>
+    <div id="bar-artist" class="player-artist">-</div>
+  </div>
+  <div class="player-controls">
+    <button id="bar-prev" class="player-btn">⏮</button>
+    <button id="bar-play" class="player-play">▶</button>
+    <button id="bar-next" class="player-btn">⏭</button>
+  </div>
+  <div class="player-progress"><div id="bar-progress-fill" class="player-progress-fill"></div></div>
+</div>
+
+<!-- Full Player Modal (hidden) -->
+<div id="full-player" class="full-player" style="display:none;">
+  <div class="full-player-header"><button id="fp-close">✕</button><div></div><button id="fp-more">⋮</button></div>
+  <img id="fp-art" class="full-player-art" src="">
+  <div class="full-player-meta"><div id="fp-title" class="full-player-title">-</div><div id="fp-artist" class="full-player-artist">-</div></div>
+  <div class="full-player-progress"><div class="progress-bar"><div class="progress-fill"></div></div><div class="progress-times"><span id="fp-current">0:00</span><span id="fp-duration">0:00</span></div></div>
+  <div class="full-player-controls"><button class="full-player-btn">⏮</button><button class="full-player-play">▶</button><button class="full-player-btn">⏭</button></div>
+  <div class="full-player-extras"><div class="full-player-extra">🤍</div><div class="full-player-extra">🔁</div><div class="full-player-extra">🔀</div></div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="edit-modal" class="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3>Edit Profile</h3>
+    <input type="text" id="edit-name" class="input mb-8" placeholder="Display name">
+    <input type="text" id="edit-bio" class="input mb-8" placeholder="Bio">
+    <input type="text" id="edit-location" class="input mb-8" placeholder="Location">
+    <button class="btn btn-primary btn-full" onclick="saveProfile()">Save</button>
+    <button class="btn btn-outline btn-full mt-8" onclick="closeEditModal()">Cancel</button>
+  </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Firebase modular SDK -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js",
+      "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+  import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyADh-PXSVsKcisJvJqIkLnjIGRhpR0ymw",
+    authDomain: "fantac-dc759.firebaseapp.com",
+    projectId: "fantac-dc759",
+    storageBucket: "fantac-dc759.firebasestorage.app",
+    messagingSenderId: "26720948797",
+    appId: "1:26720948797:web:f6b7c336ee9741c668d054"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUserProfile = null;
+
+  function showToast(msg, type = '') {
+    const container = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = `<span>${msg}</span>`;
+    container.appendChild(t);
+    setTimeout(() => {
+      t.style.animation = 'toastOut 0.3s ease forwards';
+      setTimeout(() => t.remove(), 300);
+    }, 3000);
+  }
+
+  function formatNum(n) {
+    if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+    return n.toString();
+  }
+
+  function getLevelInfo(points) {
+    const levels = [
+      { level: 1, min: 0, max: 100 },
+      { level: 2, min: 100, max: 250 },
+      { level: 3, min: 250, max: 500 },
+      { level: 4, min: 500, max: 850 },
+      { level: 5, min: 850, max: 1300 },
+      { level: 6, min: 1300, max: 1900 },
+      { level: 7, min: 1900, max: 2700 },
+      { level: 8, min: 2700, max: 3700 },
+      { level: 9, min: 3700, max: 5000 },
+      { level: 10, min: 5000, max: Infinity }
+    ];
+    return levels.find(l => points >= l.min && points < l.max) || levels[0];
+  }
+
+  async function loadProfile() {
+    const user = auth.currentUser;
+    if (!user) return;
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    if (!userDoc.exists()) return;
+    const data = userDoc.data();
+    currentUserProfile = data;
+
+    document.getElementById('profile-name').textContent = data.displayName || 'Music Fan';
+    document.getElementById('profile-bio').textContent = data.bio || 'Music lover 🎧 | Supporting real talent 🔥';
+    document.getElementById('profile-location').innerHTML = `📍 ${data.location || 'Lagos, NG'}`;
+    document.getElementById('profile-points').textContent = formatNum(data.points || 0);
+    document.getElementById('profile-level').textContent = data.level || 1;
+    document.getElementById('profile-streak').textContent = data.streak || 0;
+    document.getElementById('stat-posts').textContent = formatNum(data.posts || 0);
+    document.getElementById('stat-followers').textContent = formatNum(data.followers || 0);
+    document.getElementById('stat-following').textContent = formatNum(data.following || 0);
+    document.getElementById('stat-camps').textContent = formatNum(data.campsJoined || 0);
+    document.getElementById('stat-giveaways').textContent = formatNum(data.giveawaysWon || 0);
+
+    const avatarUrl = data.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.displayName || 'U')}&background=E1306C&color=fff`;
+    document.getElementById('profile-avatar').src = avatarUrl;
+    document.querySelector('#user-avatar-header img').src = avatarUrl;
+    document.getElementById('user-points-badge').innerHTML = `⭐ ${formatNum(data.points || 0)}`;
+
+    const points = data.points || 0;
+    const levelInfo = getLevelInfo(points);
+    const nextLevelPoints = levelInfo.max === Infinity ? levelInfo.min + 500 : levelInfo.max;
+    const progress = ((points - levelInfo.min) / (nextLevelPoints - levelInfo.min)) * 100;
+    document.getElementById('level-progress').style.width = Math.min(100, progress) + '%';
+
+    loadUserPosts(data.displayName);
+    loadMyCamps(data.joinedCamps || []);
+  }
+
+  function loadUserPosts(displayName) {
+    // Sample posts (in real app fetch from Firestore)
+    const samplePosts = [
+      { id: 1, image: 'https://picsum.photos/seed/post1/400/400', likes: 12400 },
+      { id: 2, image: 'https://picsum.photos/seed/post2/400/400', likes: 8700 },
+      { id: 3, image: 'https://picsum.photos/seed/post3/400/400', likes: 6100 }
+    ];
+    const container = document.getElementById('profile-posts-grid');
+    container.innerHTML = '';
+    samplePosts.forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'grid-post';
+      div.innerHTML = `<img src="${post.image}" alt="post"><div class="grid-post-overlay">❤️ ${formatNum(post.likes)}</div>`;
+      div.onclick = () => showToast('View post (demo)', 'info');
+      container.appendChild(div);
+    });
+    // Liked posts (same for demo)
+    const likedContainer = document.getElementById('profile-liked-grid');
+    likedContainer.innerHTML = '';
+    samplePosts.slice(0, 2).forEach(post => {
+      const div = document.createElement('div');
+      div.className = 'grid-post';
+      div.innerHTML = `<img src="${post.image}" alt="post"><div class="grid-post-overlay">❤️ ${formatNum(post.likes)}</div>`;
+      likedContainer.appendChild(div);
+    });
+  }
+
+  async function loadMyCamps(joinedCampsIds) {
+    // Sample camps (in real app fetch from Firestore 'camps' collection)
+    const allCamps = [
+      { id: 'c1', name: 'African Giant Camp', members: '128K', avatar: 'https://picsum.photos/seed/camp_burna/100/100', joined: true },
+      { id: 'c2', name: 'Celestial Camp', members: '98K', avatar: 'https://picsum.photos/seed/camp_ayra/100/100', joined: true }
+    ];
+    const myCamps = allCamps.filter(c => c.joined);
+    const container = document.getElementById('profile-camps-list');
+    container.innerHTML = '';
+    if (myCamps.length === 0) {
+      container.innerHTML = '<div class="card p-16 text-center">You haven\'t joined any camps yet. <a href="camps.html">Explore camps →</a></div>';
+      return;
+    }
+    myCamps.forEach(camp => {
+      const card = document.createElement('div');
+      card.className = 'camp-card';
+      card.innerHTML = `
+        <img class="avatar" style="width:50px;height:50px;border-radius:50%;" src="${camp.avatar}" alt="${camp.name}">
+        <div class="camp-info"><div class="camp-name">${camp.name}</div><div class="camp-members">👥 ${camp.members} members</div></div>
+        <button class="btn-outline btn-sm" onclick="location.href='camps.html'">View</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function openEditModal() {
+    if (!currentUserProfile) return;
+    document.getElementById('edit-name').value = currentUserProfile.displayName || '';
+    document.getElementById('edit-bio').value = currentUserProfile.bio || '';
+    document.getElementById('edit-location').value = currentUserProfile.location || '';
+    document.getElementById('edit-modal').classList.add('open');
+  }
+
+  function closeEditModal() {
+    document.getElementById('edit-modal').classList.remove('open');
+  }
+
+  async function saveProfile() {
+    const newName = document.getElementById('edit-name').value;
+    const newBio = document.getElementById('edit-bio').value;
+    const newLoc = document.getElementById('edit-location').value;
+    const user = auth.currentUser;
+    if (!user) return;
+    try {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        displayName: newName,
+        bio: newBio,
+        location: newLoc
+      });
+      showToast('Profile updated!', 'success');
+      closeEditModal();
+      await loadProfile();
+    } catch (e) {
+      showToast('Update failed', 'error');
+    }
+  }
+
+  // Tab switching
+  document.querySelectorAll('.content-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const tabName = tab.dataset.tab;
+      document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('profile-posts-grid').style.display = tabName === 'posts' ? 'grid' : 'none';
+      document.getElementById('profile-liked-grid').style.display = tabName === 'liked' ? 'grid' : 'none';
+      document.getElementById('profile-camps-list').style.display = tabName === 'camps' ? 'block' : 'none';
+    });
+  });
+
+  // Auth check
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = 'login.html';
+    } else {
+      loadProfile();
+    }
+  });
+
+  window.openEditModal = openEditModal;
+  window.closeEditModal = closeEditModal;
+  window.saveProfile = saveProfile;
+  window.showToast = showToast;
+</script>
+</body>
+</html>

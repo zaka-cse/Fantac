@@ -1,0 +1,23 @@
+{
+  "name": "FantaC - Music Fan Community",
+  "short_name": "FantaC",
+  "description": "The home of music. The power of fans.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#E1306C",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "categories": ["music", "entertainment", "social"],
+  "screenshots": [],
+  "shortcuts": [
+    { "name": "Home", "url": "/home.html", "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }] },
+    { "name": "Explore", "url": "/explore.html", "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }] }
+  ]
+}

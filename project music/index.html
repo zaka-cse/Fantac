@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#E1306C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="description" content="The home of music. The power of fans.">
+<title>FantaC — The Home of Music</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== FULL STYLES (embedded) ===== */
+:root {
+  --pink: #E1306C;
+  --pink-dark: #C13584;
+  --purple: #833AB4;
+  --orange: #F77737;
+  --gradient: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  --gradient-v: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Syne', sans-serif;
+  background: #0a0a0a;
+  color: white;
+}
+.splash-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.splash-bg {
+  position: absolute;
+  inset: 0;
+  background: url('https://picsum.photos/seed/concert/800/1200') center/cover no-repeat;
+  opacity: 0.4;
+}
+.splash-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.85) 100%);
+}
+.splash-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.splash-top {
+  padding: 60px 24px 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.splash-logo {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 16px;
+}
+.splash-logo em {
+  font-style: normal;
+  background: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.splash-headline {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 14px;
+}
+.splash-headline em {
+  font-style: normal;
+  color: #F77737;
+}
+.splash-sub {
+  font-size: 16px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+.splash-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+.splash-feat {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 14px 12px;
+  backdrop-filter: blur(8px);
+}
+.splash-feat-icon { font-size: 24px; margin-bottom: 6px; }
+.splash-feat-name { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.splash-feat-desc { font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.4; }
+.splash-bottom {
+  padding: 20px 24px calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.btn-splash-primary {
+  width: 100%;
+  padding: 16px;
+  border-radius: 50px;
+  background: linear-gradient(45deg, #833AB4, #E1306C, #F77737);
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 8px 30px rgba(225,48,108,0.4);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-splash-primary:active { transform: scale(0.97); }
+.btn-splash-secondary {
+  width: 100%;
+  padding: 15px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+}
+.btn-splash-secondary:hover { background: rgba(255,255,255,0.15); }
+.splash-stats {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.splash-stat { text-align: center; }
+.splash-stat-num {
+  font-size: 22px;
+  font-weight: 800;
+  background: linear-gradient(45deg, #F77737, #E1306C);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.splash-stat-label { font-size: 11px; color: rgba(255,255,255,0.55); }
+.splash-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.3);
+}
+.dot.active {
+  width: 20px;
+  background: linear-gradient(to right, #E1306C, #F77737);
+}
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+<div class="splash-page">
+  <div class="splash-bg"></div>
+  <div class="splash-gradient"></div>
+
+  <div class="splash-content">
+    <div class="splash-top">
+      <div class="splash-logo">Fanta<em>C</em></div>
+      <h1 class="splash-headline">The home of music.<br>The <em>power</em> of fans.</h1>
+      <p class="splash-sub">Stream. Support. Connect.<br>Be more than a fan.</p>
+
+      <div class="splash-features">
+        <div class="splash-feat">
+          <div class="splash-feat-icon">🎵</div>
+          <div class="splash-feat-name">Stream</div>
+          <div class="splash-feat-desc">Discover and listen to new music daily</div>
+        </div>
+        <div class="splash-feat">
+          <div class="splash-feat-icon">❤️</div>
+          <div class="splash-feat-name">Support</div>
+          <div class="splash-feat-desc">Support artists and earn points</div>
+        </div>
+        <div class="splash-feat">
+          <div class="splash-feat-icon">👥</div>
+          <div class="splash-feat-name">Connect</div>
+          <div class="splash-feat-desc">Join camps, meet fans, build community</div>
+        </div>
+        <div class="splash-feat">
+          <div class="splash-feat-icon">🏆</div>
+          <div class="splash-feat-name">Compete</div>
+          <div class="splash-feat-desc">Earn points, climb ranks, unlock rewards</div>
+        </div>
+      </div>
+
+      <div class="splash-stats">
+        <div class="splash-stat">
+          <div class="splash-stat-num">1M+</div>
+          <div class="splash-stat-label">👥 Active Fans</div>
+        </div>
+        <div class="splash-stat">
+          <div class="splash-stat-num">10K+</div>
+          <div class="splash-stat-label">⛺ Artist Camps</div>
+        </div>
+        <div class="splash-stat">
+          <div class="splash-stat-num">100M+</div>
+          <div class="splash-stat-label">⚡ Streams</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="splash-bottom">
+      <div class="splash-dots">
+        <div class="dot active"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <button class="btn-splash-primary" onclick="location.href='register.html'">
+        Get Started →
+      </button>
+      <button class="btn-splash-secondary" onclick="location.href='login.html'">
+        I already have an account
+      </button>
+      <p style="text-align:center;font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;">
+        By continuing, you agree to our <a href="#" style="color:rgba(255,255,255,0.6)">Terms of Service</a> and <a href="#" style="color:rgba(255,255,255,0.6)">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- PWA Install Banner -->
+<div id="install-banner" class="hidden" style="position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #dbdbdb;padding:12px 16px;display:flex;align-items:center;gap:12px;z-index:200;">
+  <span style="font-size:28px">🎵</span>
+  <div style="flex:1"><div style="font-weight:700;font-size:14px">Install FantaC</div><div style="font-size:12px;color:#8e8e8e">Add to home screen for the best experience</div></div>
+  <button id="install-btn" style="background:linear-gradient(45deg,#833AB4,#E1306C);color:white;border:none;border-radius:20px;padding:8px 16px;font-weight:600;font-size:13px;cursor:pointer;">Install</button>
+  <button id="close-install" style="color:#8e8e8e;font-size:20px;background:none;border:none;cursor:pointer;">✕</button>
+</div>
+
+<!-- Firebase SDK (modular) for auth check -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+      "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"
+    }
+  }
+</script>
+
+<script type="module">
+  import { initializeApp } from "firebase/app";
+  import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+  // Your exact Firebase config (same as login/register)
+  const firebaseConfig = {
+    apiKey: "AIzaSyADh-PXSVsKcisJvJqIkLnjIGRhpR0ymw",
+    authDomain: "fantac-dc759.firebaseapp.com",
+    projectId: "fantac-dc759",
+    storageBucket: "fantac-dc759.firebasestorage.app",
+    messagingSenderId: "26720948797",
+    appId: "1:26720948797:web:f6b7c336ee9741c668d054"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // If user is already signed in, redirect to home immediately
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      window.location.href = 'home.html';
+    }
+  });
+
+  // Service Worker registration (PWA)
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.warn('SW registration failed:', err));
+    });
+  }
+
+  // PWA install prompt handling
+  let deferredPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    const banner = document.getElementById('install-banner');
+    if (banner) banner.classList.remove('hidden');
+  });
+
+  function promptInstall() {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log('User accepted install');
+        }
+        deferredPrompt = null;
+        document.getElementById('install-banner').classList.add('hidden');
+      });
+    }
+  }
+
+  document.getElementById('install-btn')?.addEventListener('click', promptInstall);
+  document.getElementById('close-install')?.addEventListener('click', () => {
+    document.getElementById('install-banner').classList.add('hidden');
+  });
+</script>
+</body>
+</html>
